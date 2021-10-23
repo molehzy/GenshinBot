@@ -27,10 +27,7 @@
 │  ├─Bind_db					- 存放绑定信息的文件夹
 │  │
 │  └─Img						- 存放图片的文件夹
-│      ├─character_side_icon	- 缓存从API下载的图片的文件夹
-│      │
-│      └─tmp					- 缓存待发送图片的文件夹
+│      └─character_side_icon	- 缓存从API下载的图片的文件夹
 │
 └─Log							- 存放日志的文件夹
 ```
-
