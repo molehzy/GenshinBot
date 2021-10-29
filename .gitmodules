@@ -1,0 +1,6 @@
+[submodule "GenshinAPI"]
+	path = GenshinAPI
+	url = https://github.com/molehzy/GenshinAPI
+[submodule "go-cqhttp-e"]
+	path = go-cqhttp-e
+	url = https://github.com/molehzy/go-cqhttp-e
