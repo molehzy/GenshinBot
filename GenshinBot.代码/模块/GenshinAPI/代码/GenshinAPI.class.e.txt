@@ -1,0 +1,90 @@
+﻿.版本 2
+
+.程序集 GenshinAPI, , 公开
+.子程序 置Cookie, , 公开
+    .参数 Cookie, 文本型
+
+    
+
+.子程序 取Cookie, 文本型, 公开
+    
+
+.子程序 get_user_stats, 文本型, 公开
+    .参数 uid, 文本型
+
+    
+
+.子程序 get_characters, 文本型, 公开
+    .参数 uid, 文本型
+    .参数 character_ids, 文本型, 数组
+
+    
+
+.子程序 get_spiralAbyss, 文本型, 公开
+    .参数 uid, 文本型
+    .参数 schedule_type, 文本型
+
+    
+
+.子程序 get_activities, 文本型, 公开
+    .参数 uid, 文本型
+
+    
+
+.子程序 get_monthDetail, 文本型, 公开
+    .参数 uid, 文本型
+    .参数 page, 文本型
+    .参数 month, 文本型
+    .参数 type, 文本型
+
+    
+
+.子程序 get_monthInfo, 文本型, 公开
+    .参数 uid, 文本型
+    .参数 month, 文本型
+
+    
+
+.子程序 get_dailyNote, 文本型, 公开
+    .参数 uid, 文本型
+
+    
+
+.子程序 get_UserGameRolesByCookie, 文本型, 公开
+    .参数 CN, 逻辑型
+
+    
+
+.子程序 get_GameRecordCard, 文本型, 公开
+    .参数 uid, 文本型, , 米游社uid
+    .参数 CN, 逻辑型
+
+    
+
+.子程序 get_signinHome_OS, 文本型, 公开
+    
+
+.子程序 get_signinInfo_OS, 文本型, 公开
+    
+
+.子程序 get_sign_OS, 文本型, 公开
+    
+
+.子程序 get_signinInfo_CN, 文本型, 公开
+    .参数 uid, 文本型
+
+    
+
+.子程序 get_resignInfo_CN, 文本型, 公开
+    .参数 uid, 文本型
+
+    
+
+.子程序 get_signinHome_CN, 文本型, 公开
+    
+
+.子程序 get_sign_CN, 文本型, 公开
+    .参数 uid, 文本型
+
+    
+

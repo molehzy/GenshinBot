@@ -1,0 +1,53 @@
+﻿.版本 2
+
+.程序集 __HIDDEN_TEMP_MOD__, , 公开
+.子程序 _private, , 公开, 私聊消息,示例代码
+    .参数 message, 文本型, , 消息内容
+    .参数 message_id, 文本型, , 消息 ID
+    .参数 nickname, 文本型, , 昵称
+    .参数 user_id, 文本型, , 发送者 QQ 号
+    .参数 sub_type, 文本型, , 消息子类型(friend、group、other)
+
+    
+
+.子程序 _group, , 公开, 群消息,示例代码
+    .参数 group_id, 文本型, , 群号
+    .参数 message, 文本型, , 消息内容
+    .参数 message_id, 文本型, , 消息 ID
+    .参数 card, 文本型, , 群名片／备注
+    .参数 nickname, 文本型, , 昵称
+    .参数 role, 文本型, , 角色，owner 或 admin 或 member
+    .参数 user_id, 文本型, , 发送者 QQ 号
+    .参数 sub_type, 文本型, , 消息子类型(normal、anonymous、notice)
+
+    
+
+.子程序 _notice, , 公开, 通知事件,示例代码
+    .参数 notice_type, 文本型, , 通知类型
+    .参数 name, 文本型, , 文件名
+    .参数 size, 文本型, , 文件大小（字节数）
+    .参数 url, 文本型, , 文件链接
+    .参数 group_id, 文本型, , 群号
+    .参数 user_id, 文本型, , QQ 号
+    .参数 sub_type, 文本型, , 事件子类型
+    .参数 operator_id, 文本型, , 操作者 QQ 号
+    .参数 duration, 文本型, , 禁言时长，单位秒
+    .参数 message_id, 文本型, , 被撤回的消息 ID
+
+    
+
+.子程序 _request, , 公开, 请求事件,示例代码
+    .参数 request_type, 文本型, , 请求类型
+    .参数 sub_type, 文本型, , 请求子类型
+    .参数 group_id, 文本型, , 群号
+    .参数 user_id, 文本型, , 发送请求的 QQ 号
+    .参数 comment, 文本型, , 验证信息
+    .参数 flag, 文本型, , 请求 flag，在调用处理请求的 API 时需要传入
+
+    
+
+.子程序 _ws, , 公开, ws客户端消息,示例代码
+    .参数 msg, 文本型
+
+    
+

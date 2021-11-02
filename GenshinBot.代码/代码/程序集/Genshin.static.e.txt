@@ -1,0 +1,1065 @@
+﻿.版本 2
+.支持库 e2ee
+
+.程序集 Genshin
+.子程序 _get_nickname, 文本型
+    .参数 QQ, 文本型
+    .参数 Tag, 文本型
+    .局部变量 gs, GenshinAPI
+    .局部变量 res, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 i, 整数型
+    .局部变量 nickname, 文本型
+
+    gs.置Cookie (绑定_读CK (QQ, Tag))
+    res ＝ gs.get_UserGameRolesByCookie (绑定_读CN (QQ, Tag))
+    
+    .判断开始 (data.从JSON载入 (res, , , ))
+        
+        .判断开始 (绑定_读CN (QQ, Tag))
+            
+            .计次循环首 (data.取数量 (“//list”), i)
+                .如果真 (data.取文本 (“//list[” ＋ 到文本 (i) ＋ “].game_biz”) ＝ “hk4e_cn”)
+                    nickname ＝ data.取文本 (“//list[” ＋ 到文本 (i) ＋ “].nickname”)
+                    跳出循环 ()
+                .如果真结束
+                
+            .计次循环尾 ()
+            返回 (nickname)
+            
+        .默认
+            .计次循环首 (data.取数量 (“//list”), i)
+                .如果真 (data.取文本 (“//list[” ＋ 到文本 (i) ＋ “].game_biz”) ＝ “hk4e_global”)
+                    nickname ＝ data.取文本 (“//list[” ＋ 到文本 (i) ＋ “].nickname”)
+                    跳出循环 ()
+                .如果真结束
+                
+            .计次循环尾 ()
+            返回 (nickname)
+        .判断结束
+        
+    .默认
+        返回 (“”)
+    .判断结束
+    
+
+.子程序 实时便笺
+    .参数 Type, 文本型
+    .参数 QQ, 文本型
+    .参数 Group, 文本型
+    .参数 Tag, 文本型
+    .局部变量 gs, GenshinAPI
+    .局部变量 res, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 i, 整数型
+    .局部变量 正则, 正则表达式类
+    .局部变量 iconurl, 文本型
+    .局部变量 iconfile, 文本型
+    .局部变量 c, 网站客户端
+    .局部变量 树脂_现有, 文本型
+    .局部变量 树脂_上限, 文本型
+    .局部变量 树脂_时间, 文本型
+    .局部变量 每日_完成, 文本型
+    .局部变量 每日_上限, 文本型
+    .局部变量 每日_奖励, 文本型
+    .局部变量 周本_现有, 文本型
+    .局部变量 周本_上限, 文本型
+    .局部变量 派遣_现有, 文本型
+    .局部变量 派遣_上限, 文本型
+    .局部变量 派遣_状态, 文本型
+    .局部变量 派遣_时间, 文本型
+    .局部变量 派遣_人物, 文本型
+    .局部变量 str, 文本型, , "0"
+    .局部变量 tmp, 文本型
+    .局部变量 hb, 内存画板
+    .局部变量 img, 图片对象
+    .局部变量 b64, 文本型
+
+    .判断开始 (Type ＝ “1”)
+        日志 (“[实时便笺] ( ” ＋ QQ ＋ “ ) | 线程启动 ”)
+    .默认
+        日志 (“[实时便笺] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动 ”)
+    .判断结束
+    
+    .判断开始 (线程锁.尝试进入_文本 (QQ))
+        
+        gs.置Cookie (绑定_读CK (QQ, Tag))
+        res ＝ gs.get_dailyNote (绑定_读UID (QQ, Tag))
+        
+        .判断开始 (data.从JSON载入 (res, , , ))
+            树脂_现有 ＝ data.取文本 (“//current_resin”)
+            树脂_上限 ＝ data.取文本 (“//max_resin”)
+            .判断开始 (data.取整数 (“//resin_recovery_time”) ＞ 0)
+                树脂_时间 ＝ 时间_秒到时分秒格式 (data.取整数 (“//resin_recovery_time”), “h:m:s”, 真)
+            .默认
+                树脂_时间 ＝ “已溢出”
+            .判断结束
+            
+            每日_完成 ＝ data.取文本 (“//finished_task_num”)
+            每日_上限 ＝ data.取文本 (“//total_task_num”)
+            .判断开始 (data.取逻辑值 (“//is_extra_task_reward_received”))
+                每日_奖励 ＝ “已领取”
+            .默认
+                每日_奖励 ＝ “未领取”
+            .判断结束
+            
+            周本_现有 ＝ data.取文本 (“//remain_resin_discount_num”)
+            周本_上限 ＝ data.取文本 (“//resin_discount_num_limit”)
+            派遣_现有 ＝ data.取文本 (“//current_expedition_num”)
+            派遣_上限 ＝ data.取文本 (“//max_expedition_num”)
+            
+            tmp ＝ “  树脂 : ” ＋ 树脂_现有 ＋ “/” ＋ 树脂_上限 ＋ “  |  恢复时间 : ” ＋ 树脂_时间 ＋ “  ”
+            加入成员 (str, tmp)
+            tmp ＝ “  每日 : ” ＋ 每日_完成 ＋ “/” ＋ 每日_上限 ＋ “  |  NPC奖励 : ” ＋ 每日_奖励 ＋ “  ”
+            加入成员 (str, tmp)
+            tmp ＝ “  派遣 : ” ＋ 派遣_现有 ＋ “/” ＋ 派遣_上限 ＋ “  |  周本半价 : ” ＋ 周本_现有 ＋ “/” ＋ 周本_上限 ＋ “  ”
+            加入成员 (str, tmp)
+            
+            .计次循环首 (data.取数量 (“//expeditions”), i)
+                iconurl ＝ data.取文本 (“//expeditions[” ＋ 到文本 (i) ＋ “].avatar_side_icon”)
+                正则.创建 (“https://.+/game_record/genshin/character_side_icon/(\w+)\.png”, iconurl)
+                
+                .判断开始 (data.取文本 (“//expeditions[” ＋ 到文本 (i) ＋ “].status”) ＝ “Finished”)
+                    派遣_状态 ＝ “已完成”
+                    派遣_人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_Side_”, “”, , , 真)
+                    
+                    tmp ＝ “      ” ＋ 派遣_人物 ＋ “  |  ” ＋ 派遣_状态 ＋ “  ”
+                    加入成员 (str, tmp)
+                    
+                .默认
+                    派遣_状态 ＝ “剩余时间”
+                    派遣_时间 ＝ 时间_秒到时分秒格式 (data.取整数 (“//expeditions[” ＋ 到文本 (i) ＋ “].remained_time”), “h:m:s”, 真)
+                    派遣_人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_Side_”, “”, , , 真)
+                    
+                    tmp ＝ “      ” ＋ 派遣_人物 ＋ “  |  ” ＋ 派遣_状态 ＋ “ : ” ＋ 派遣_时间 ＋ “  ”
+                    加入成员 (str, tmp)
+                    
+                .判断结束
+                
+            .计次循环尾 ()
+            
+            tmp ＝ 文本制表_表头 (取数组成员数 (str), 2, str, “ / 实时便笺 \ ” ＋ _get_nickname (QQ, Tag) ＋ “ / ” ＋ 绑定_读UID (QQ, Tag) ＋ “ \ ”)
+            str ＝ 分割文本 (tmp, #换行符, )
+            
+            hb.创建 (1, 1, #白色, )
+            hb.字体属性 (“等距更纱黑体 SC”, 12, , , , , , , )
+            hb.置画板尺寸 (hb.取文本宽度 (str [1]), hb.取文本高度 (str [1]) × 取数组成员数 (str))
+            hb.置写出位置 (0, 0, 假)
+            hb.写出 (tmp)
+            
+            .计次循环首 (data.取数量 (“//expeditions”), i)
+                iconurl ＝ data.取文本 (“//expeditions[” ＋ 到文本 (i) ＋ “].avatar_side_icon”)
+                正则.创建 (“https://.+/game_record/genshin/character_side_icon/(\w+)\.png”, iconurl)
+                iconfile ＝ 图片目录 ＋ “character_side_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+                
+                .如果真 (取反 (路径_是否为文件 (iconfile)))
+                    c.执行下载 (iconurl, iconfile, )
+                .如果真结束
+                
+                hb.画图片 (hb.载入图片文件 (iconfile), 5, 125 ＋ i × 40, 40, 40, )
+                hb.卸载图片 ()
+                
+            .计次循环尾 ()
+            
+            img.加载数据 (hb.取图片 ())
+            b64 ＝ Base64编码 (img.取出图片数据 (0), )
+            hb.销毁 ()
+            img.释放 ()
+            
+            .判断开始 (Type ＝ “1”)
+                CQ.发送私聊消息 (QQ, CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .默认
+                CQ.发送群消息 (Group, CQ.At (QQ) ＋ CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .判断结束
+            
+        .判断 (Type ＝ “1”)
+            CQ.发送私聊消息 (QQ, “[get_dailyNote] ” ＋ res, 假)
+            日志 (“[实时便笺] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .默认
+            CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_dailyNote] ” ＋ res, 假)
+            日志 (“[实时便笺] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .判断结束
+        
+        线程锁.删除标识_文本 (QQ)
+        
+    .判断 (Type ＝ “1”)
+        CQ.发送私聊消息 (QQ, “不要着急嘛~~~要不打个手枪?”, 假)
+    .默认
+        CQ.发送群消息 (Group, CQ.At (QQ) ＋ “不要着急嘛~~~要不打个手枪?”, 假)
+    .判断结束
+    
+    
+
+.子程序 数据总览
+    .参数 Type, 文本型
+    .参数 QQ, 文本型
+    .参数 Group, 文本型
+    .参数 Tag, 文本型
+    .局部变量 gs, GenshinAPI
+    .局部变量 res, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 i, 整数型
+    .局部变量 活跃天数, 文本型
+    .局部变量 成就达成数, 文本型
+    .局部变量 角色获得数, 文本型
+    .局部变量 解锁传送点, 文本型
+    .局部变量 风神瞳, 文本型
+    .局部变量 岩神瞳, 文本型
+    .局部变量 雷神瞳, 文本型
+    .局部变量 解锁秘境, 文本型
+    .局部变量 深境螺旋, 文本型
+    .局部变量 华丽宝箱, 文本型
+    .局部变量 珍贵宝箱, 文本型
+    .局部变量 精致宝箱, 文本型
+    .局部变量 普通宝箱, 文本型
+    .局部变量 奇馈宝箱, 文本型
+    .局部变量 str, 文本型, , "0"
+    .局部变量 tmp, 文本型
+    .局部变量 hb, 内存画板
+    .局部变量 img, 图片对象
+    .局部变量 世界_名称, 文本型
+    .局部变量 世界_等级, 文本型
+    .局部变量 世界_探索度, 文本型
+    .局部变量 壶_等级, 文本型
+    .局部变量 壶_仙力, 文本型
+    .局部变量 壶_获得摆设, 文本型
+    .局部变量 壶_访客, 文本型
+    .局部变量 b64, 文本型
+
+    .判断开始 (Type ＝ “1”)
+        日志 (“[数据总览] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+    .默认
+        日志 (“[数据总览] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+    .判断结束
+    
+    .判断开始 (线程锁.尝试进入_文本 (QQ))
+        
+        gs.置Cookie (绑定_读CK (QQ, Tag))
+        res ＝ gs.get_user_stats (绑定_读UID (QQ, Tag))
+        
+        .判断开始 (data.从JSON载入 (res, , , ))
+            活跃天数 ＝ data.取文本 (“//stats.active_day_number”)
+            成就达成数 ＝ data.取文本 (“//stats.achievement_number”)
+            角色获得数 ＝ data.取文本 (“//stats.avatar_number”)
+            解锁传送点 ＝ data.取文本 (“//stats.way_point_number”)
+            风神瞳 ＝ data.取文本 (“//stats.anemoculus_number”)
+            岩神瞳 ＝ data.取文本 (“//stats.geoculus_number”)
+            雷神瞳 ＝ data.取文本 (“//stats.electroculus_number”)
+            解锁秘境 ＝ data.取文本 (“//stats.domain_number”)
+            深境螺旋 ＝ data.取文本 (“//stats.spiral_abyss”)
+            华丽宝箱 ＝ data.取文本 (“//stats.luxurious_chest_number”)
+            珍贵宝箱 ＝ data.取文本 (“//stats.precious_chest_number”)
+            精致宝箱 ＝ data.取文本 (“//stats.exquisite_chest_number”)
+            普通宝箱 ＝ data.取文本 (“//stats.common_chest_number”)
+            奇馈宝箱 ＝ data.取文本 (“//stats.magic_chest_number”)
+            
+            tmp ＝ “  活跃天数 : ” ＋ 活跃天数 ＋ “  |  成就达成数 : ” ＋ 成就达成数 ＋ “  |  角色获得数 : ” ＋ 角色获得数 ＋ “  |  解锁传送点 : ” ＋ 解锁传送点 ＋ “  |  深境螺旋 : ” ＋ 深境螺旋 ＋ “  ”
+            加入成员 (str, tmp)
+            tmp ＝ “  风神瞳 : ” ＋ 风神瞳 ＋ “  |  岩神瞳 : ” ＋ 岩神瞳 ＋ “  |  雷神瞳 : ” ＋ 雷神瞳 ＋ “  |  \\\  |  解锁秘境 : ” ＋ 解锁秘境 ＋ “  ”
+            加入成员 (str, tmp)
+            tmp ＝ “  华丽宝箱 : ” ＋ 华丽宝箱 ＋ “  |  珍贵宝箱 : ” ＋ 珍贵宝箱 ＋ “  |  精致宝箱 : ” ＋ 精致宝箱 ＋ “  |  普通宝箱 : ” ＋ 普通宝箱 ＋ “  |  奇馈宝箱 : ” ＋ 奇馈宝箱 ＋ “  ”
+            加入成员 (str, tmp)
+            
+            tmp ＝ “ | | | | ”
+            加入成员 (str, tmp)
+            
+            
+            .计次循环首 (data.取数量 (“//world_explorations”), i)
+                世界_名称 ＝ data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].name”)
+                世界_等级 ＝ data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].level”)
+                世界_探索度 ＝ _到百分比 (data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].exploration_percentage”))
+                
+                tmp ＝ “  ” ＋ 世界_名称 ＋ “  |  城市声望 : ” ＋ 世界_等级 ＋ “  |  探索度 : ” ＋ 世界_探索度
+                .判断开始 (取反 (data.是否存在 (“//world_explorations[” ＋ 到文本 (i) ＋ “].offerings[1].name”)))
+                    tmp ＝ tmp ＋ “  |  \\\  |  \\\  ”
+                    
+                .默认
+                    tmp ＝ tmp ＋ “  |  ” ＋ data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].offerings[1].name”) ＋ “ : ” ＋ data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].offerings[1].level”) ＋ “ 级” ＋ “  |  \\\  ”
+                    
+                .判断结束
+                加入成员 (str, tmp)
+                
+            .计次循环尾 ()
+            
+            .如果真 (data.是否存在 (“//homes[1].level”))
+                壶_等级 ＝ data.取文本 (“//homes[1].level”)
+                壶_仙力 ＝ data.取文本 (“//homes[1].comfort_num”)
+                壶_获得摆设 ＝ data.取文本 (“//homes[1].item_num”)
+                壶_访客 ＝ data.取文本 (“//homes[1].visit_num”)
+                tmp ＝ “  尘歌壶  |  信任等级 : ” ＋ 壶_等级 ＋ “  |  最高仙力 : ” ＋ 壶_仙力 ＋ “  |  获得摆设 : ” ＋ 壶_获得摆设 ＋ “  |  历史访客 : ” ＋ 壶_访客 ＋ “  ”
+                加入成员 (str, tmp)
+            .如果真结束
+            
+            
+            tmp ＝ 文本制表_表头 (取数组成员数 (str), 5, str, “ / 数据总览 \ ” ＋ _get_nickname (QQ, Tag) ＋ “ / ” ＋ 绑定_读UID (QQ, Tag) ＋ “ \ ”)
+            str ＝ 分割文本 (tmp, #换行符, )
+            
+            hb.创建 (1, 1, #白色, )
+            hb.字体属性 (“等距更纱黑体 SC”, 12, , , , , , , )
+            hb.置画板尺寸 (hb.取文本宽度 (str [1]), hb.取文本高度 (str [1]) × 取数组成员数 (str))
+            hb.置写出位置 (0, 0, 假)
+            hb.写出 (tmp)
+            
+            img.加载数据 (hb.取图片 ())
+            b64 ＝ Base64编码 (img.取出图片数据 (0), )
+            hb.销毁 ()
+            img.释放 ()
+            
+            .判断开始 (Type ＝ “1”)
+                CQ.发送私聊消息 (QQ, CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .默认
+                CQ.发送群消息 (Group, CQ.At (QQ) ＋ CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .判断结束
+            
+        .判断 (Type ＝ “1”)
+            CQ.发送私聊消息 (QQ, “[get_user_stats] ” ＋ res, 假)
+            日志 (“[数据总览] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .默认
+            CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_user_stats] ” ＋ res, 假)
+            日志 (“[数据总览] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .判断结束
+        
+        线程锁.删除标识_文本 (QQ)
+        
+    .判断 (Type ＝ “1”)
+        CQ.发送私聊消息 (QQ, “不要着急嘛~~~要不打个手枪?”, 假)
+    .默认
+        CQ.发送群消息 (Group, CQ.At (QQ) ＋ “不要着急嘛~~~要不打个手枪?”, 假)
+    .判断结束
+    
+    
+
+.子程序 手札
+    .参数 Type, 文本型
+    .参数 QQ, 文本型
+    .参数 Group, 文本型
+    .参数 Tag, 文本型
+    .局部变量 gs, GenshinAPI
+    .局部变量 res, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 i, 整数型
+    .局部变量 今日原石, 文本型
+    .局部变量 今日摩拉, 文本型
+    .局部变量 本月原石, 文本型
+    .局部变量 本月摩拉, 文本型
+    .局部变量 str, 文本型, , "0"
+    .局部变量 tmp, 文本型
+    .局部变量 hb, 内存画板
+    .局部变量 img, 图片对象
+    .局部变量 b64, 文本型
+
+    .判断开始 (Type ＝ “1”)
+        日志 (“[手札] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+    .默认
+        日志 (“[手札] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+    .判断结束
+    
+    .判断开始 (线程锁.尝试进入_文本 (QQ))
+        
+        gs.置Cookie (绑定_读CK (QQ, Tag))
+        res ＝ gs.get_monthInfo (绑定_读UID (QQ, Tag), “0”)
+        
+        .判断开始 (data.从JSON载入 (res, , , ))
+            今日原石 ＝ data.取文本 (“//day_data.current_primogems”)
+            今日摩拉 ＝ data.取文本 (“//day_data.current_mora”)
+            本月原石 ＝ data.取文本 (“//month_data.current_primogems”)
+            本月摩拉 ＝ data.取文本 (“//month_data.current_mora”)
+            
+            tmp ＝ “  今日原石 : ” ＋ 今日原石 ＋ “  |  今日摩拉 : ” ＋ 今日摩拉 ＋ “  ”
+            加入成员 (str, tmp)
+            tmp ＝ “  本月原石 : ” ＋ 本月原石 ＋ “  |  本月摩拉 : ” ＋ 本月摩拉 ＋ “  ”
+            加入成员 (str, tmp)
+            tmp ＝ “  原石组成  |  ---  ”
+            加入成员 (str, tmp)
+            
+            .计次循环首 (data.取数量 (“//month_data.group_by”), i)
+                tmp ＝ “  ” ＋ data.取文本 (“//month_data.group_by[” ＋ 到文本 (i) ＋ “].action”) ＋ “  |  ” ＋ data.取文本 (“//month_data.group_by[” ＋ 到文本 (i) ＋ “].num”) ＋ “ ( ” ＋ data.取文本 (“//month_data.group_by[” ＋ 到文本 (i) ＋ “].percent”) ＋ “% )  ”
+                加入成员 (str, tmp)
+                
+            .计次循环尾 ()
+            
+            tmp ＝ 文本制表_表头 (取数组成员数 (str), 2, str, “ / 旅行者札记 \ ” ＋ _get_nickname (QQ, Tag) ＋ “ / ” ＋ 绑定_读UID (QQ, Tag) ＋ “ \ ”)
+            str ＝ 分割文本 (tmp, #换行符, )
+            
+            hb.创建 (1, 1, #白色, )
+            hb.字体属性 (“等距更纱黑体 SC”, 12, , , , , , , )
+            hb.置画板尺寸 (hb.取文本宽度 (str [1]), hb.取文本高度 (str [1]) × 取数组成员数 (str))
+            hb.置写出位置 (0, 0, 假)
+            hb.写出 (tmp)
+            
+            img.加载数据 (hb.取图片 ())
+            b64 ＝ Base64编码 (img.取出图片数据 (0), )
+            hb.销毁 ()
+            img.释放 ()
+            
+            .判断开始 (Type ＝ “1”)
+                CQ.发送私聊消息 (QQ, CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .默认
+                CQ.发送群消息 (Group, CQ.At (QQ) ＋ CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .判断结束
+            
+        .判断 (Type ＝ “1”)
+            CQ.发送私聊消息 (QQ, “[get_monthInfo_CN] ” ＋ res, 假)
+            日志 (“[手札] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .默认
+            CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_monthInfo_CN] ” ＋ res, 假)
+            日志 (“[手札] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .判断结束
+        
+        线程锁.删除标识_文本 (QQ)
+        
+    .判断 (Type ＝ “1”)
+        CQ.发送私聊消息 (QQ, “不要着急嘛~~~要不打个手枪?”, 假)
+    .默认
+        CQ.发送群消息 (Group, CQ.At (QQ) ＋ “不要着急嘛~~~要不打个手枪?”, 假)
+    .判断结束
+    
+    
+
+.子程序 签到
+    .参数 Type, 文本型
+    .参数 QQ, 文本型
+    .参数 Group, 文本型
+    .参数 Tag, 文本型
+    .局部变量 gs, GenshinAPI
+    .局部变量 i, 整数型
+    .局部变量 signinHome, 存取键值表
+    .局部变量 res, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 签到物品, 文本型
+    .局部变量 物品数量, 文本型
+
+    .判断开始 (Type ＝ “1”)
+        日志 (“[签到] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+    .默认
+        日志 (“[签到] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+    .判断结束
+    
+    .判断开始 (线程锁.尝试进入_文本 (QQ))
+        
+        gs.置Cookie (绑定_读CK (QQ, Tag))
+        
+        .判断开始 (绑定_读CN (QQ, Tag))
+            res ＝ gs.get_signinInfo_CN (绑定_读UID (QQ, Tag))
+            
+            .判断开始 (data.从JSON载入 (res, , , ))
+                
+                .判断开始 (取反 (data.取逻辑值 (“//is_sign”)))
+                    signinHome.从JSON载入 (gs.get_signinHome_CN (), , , )
+                    res ＝ gs.get_sign_CN (绑定_读UID (QQ, Tag))
+                    
+                    .判断开始 (data.从JSON载入 (res, , , ))
+                        res ＝ gs.get_signinInfo_CN (绑定_读UID (QQ, Tag))
+                        
+                        .判断开始 (data.从JSON载入 (res, , , ))
+                            签到物品 ＝ signinHome.取文本 (“//awards[” ＋ data.取文本 (“//total_sign_day”) ＋ “].name”)
+                            物品数量 ＝ signinHome.取文本 (“//awards[” ＋ data.取文本 (“//total_sign_day”) ＋ “].cnt”)
+                            
+                            .判断开始 (Type ＝ “1”)
+                                CQ.发送私聊消息 (QQ, “签到成功! 本月累计签到 ” ＋ data.取文本 (“//total_sign_day”) ＋ “天” ＋ #换行符 ＋ “获得 : ” ＋ 签到物品 ＋ “ x” ＋ 物品数量, 假)
+                            .默认
+                                CQ.发送群消息 (Group, CQ.At (QQ) ＋ “签到成功! 本月累计签到 ” ＋ data.取文本 (“//total_sign_day”) ＋ “天” ＋ #换行符 ＋ “获得 : ” ＋ 签到物品 ＋ “ x” ＋ 物品数量, 假)
+                            .判断结束
+                            
+                        .判断 (Type ＝ “1”)
+                            CQ.发送私聊消息 (QQ, “[get_signinInfo_CN] ” ＋ res, 假)
+                            日志 (“[get_signinInfo_CN] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                        .默认
+                            CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_signinInfo_CN] ” ＋ res, 假)
+                            日志 (“[get_signinInfo_CN] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                        .判断结束
+                        
+                    .判断 (Type ＝ “1”)
+                        CQ.发送私聊消息 (QQ, “[get_sign_CN] ” ＋ res, 假)
+                        日志 (“[get_sign_CN] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                    .默认
+                        CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_sign_CN] ” ＋ res, 假)
+                        日志 (“[get_sign_CN] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                    .判断结束
+                    
+                .判断 (Type ＝ “1”)
+                    CQ.发送私聊消息 (QQ, “今日已签到!”, 假)
+                .默认
+                    CQ.发送群消息 (Group, CQ.At (QQ) ＋ “今日已签到!”, 假)
+                .判断结束
+                
+            .判断 (Type ＝ “1”)
+                CQ.发送私聊消息 (QQ, “[get_signinInfo_CN] ” ＋ res, 假)
+                日志 (“[get_signinInfo_CN] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+            .默认
+                CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_signinInfo_CN] ” ＋ res, 假)
+                日志 (“[get_signinInfo_CN] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+            .判断结束
+            
+            
+        .默认
+            res ＝ gs.get_signinInfo_OS ()
+            
+            .判断开始 (data.从JSON载入 (res, , , ))
+                
+                .判断开始 (取反 (data.取逻辑值 (“//is_sign”)))
+                    signinHome.从JSON载入 (gs.get_signinHome_OS (), , , )
+                    res ＝ gs.get_sign_OS ()
+                    
+                    .判断开始 (data.从JSON载入 (res, , , ))
+                        res ＝ gs.get_signinInfo_OS ()
+                        
+                        .判断开始 (data.从JSON载入 (res, , , ))
+                            签到物品 ＝ signinHome.取文本 (“//awards[” ＋ data.取文本 (“//total_sign_day”) ＋ “].name”)
+                            物品数量 ＝ signinHome.取文本 (“//awards[” ＋ data.取文本 (“//total_sign_day”) ＋ “].cnt”)
+                            
+                            .判断开始 (Type ＝ “1”)
+                                CQ.发送私聊消息 (QQ, “签到成功!获得 : ” ＋ 签到物品 ＋ “ x” ＋ 物品数量, 假)
+                            .默认
+                                CQ.发送群消息 (Group, CQ.At (QQ) ＋ “签到成功!获得 : ” ＋ 签到物品 ＋ “ x” ＋ 物品数量, 假)
+                            .判断结束
+                            
+                        .判断 (Type ＝ “1”)
+                            CQ.发送私聊消息 (QQ, “[get_signinInfo_OS] ” ＋ res, 假)
+                            日志 (“[get_signinInfo_OS] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                        .默认
+                            CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_signinInfo_OS] ” ＋ res, 假)
+                            日志 (“[get_signinInfo_OS] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                        .判断结束
+                        
+                    .判断 (Type ＝ “1”)
+                        CQ.发送私聊消息 (QQ, “[get_sign_OS] ” ＋ res, 假)
+                        日志 (“[get_sign_OS] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                    .默认
+                        CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_sign_OS] ” ＋ res, 假)
+                        日志 (“[get_sign_OS] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                    .判断结束
+                    
+                .判断 (Type ＝ “1”)
+                    CQ.发送私聊消息 (QQ, “今日已签到!”, 假)
+                .默认
+                    CQ.发送群消息 (Group, CQ.At (QQ) ＋ “今日已签到!”, 假)
+                .判断结束
+                
+            .判断 (Type ＝ “1”)
+                CQ.发送私聊消息 (QQ, “[get_signinInfo_OS] ” ＋ res, 假)
+                日志 (“[get_signinInfo_OS] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+            .默认
+                CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_signinInfo_OS] ” ＋ res, 假)
+                日志 (“[get_signinInfo_OS] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+            .判断结束
+            
+        .判断结束
+        
+        线程锁.删除标识_文本 (QQ)
+        
+    .判断 (Type ＝ “1”)
+        CQ.发送私聊消息 (QQ, “不要着急嘛~~~要不打个手枪?”, 假)
+    .默认
+        CQ.发送群消息 (Group, CQ.At (QQ) ＋ “不要着急嘛~~~要不打个手枪?”, 假)
+    .判断结束
+    
+    
+
+.子程序 深渊
+    .参数 Type, 文本型
+    .参数 QQ, 文本型
+    .参数 Group, 文本型
+    .参数 Tag, 文本型
+    .参数 schedule_type, 文本型
+    .局部变量 gs, GenshinAPI
+    .局部变量 res, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 最深抵达, 文本型
+    .局部变量 战斗次数, 文本型
+    .局部变量 胜利次数, 文本型
+    .局部变量 本期渊星, 文本型
+    .局部变量 str, 文本型, , "0"
+    .局部变量 tmp, 文本型
+    .局部变量 正则, 正则表达式类
+    .局部变量 iconurl, 文本型
+    .局部变量 iconfile, 文本型
+    .局部变量 c, 网站客户端
+    .局部变量 最强一击_人物, 文本型
+    .局部变量 最强一击_数值, 文本型
+    .局部变量 最强一击_图片, 文本型
+    .局部变量 最强肉盾_人物, 文本型
+    .局部变量 最强肉盾_数值, 文本型
+    .局部变量 最强肉盾_图片, 文本型
+    .局部变量 元素技能_人物, 文本型
+    .局部变量 元素技能_数值, 文本型
+    .局部变量 元素技能_图片, 文本型
+    .局部变量 元素爆发_人物, 文本型
+    .局部变量 元素爆发_数值, 文本型
+    .局部变量 元素爆发_图片, 文本型
+    .局部变量 i, 整数型
+    .局部变量 ii, 整数型
+    .局部变量 iii, 整数型
+    .局部变量 iiii, 整数型
+    .局部变量 层数, 文本型
+    .局部变量 间数, 文本型
+    .局部变量 星数_总, 文本型
+    .局部变量 星数_间, 文本型
+    .局部变量 人物, 文本型
+    .局部变量 长度, 整数型
+    .局部变量 时间, 文本型
+    .局部变量 总览, 文本型
+    .局部变量 详细, 文本型
+    .局部变量 总览画板, 内存画板
+    .局部变量 详细画板, 内存画板
+    .局部变量 左边, 整数型
+    .局部变量 顶边, 整数型
+    .局部变量 img, 图片对象
+    .局部变量 b64, 文本型
+
+    .判断开始 (Type ＝ “1”)
+        日志 (“[深渊] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+    .默认
+        日志 (“[深渊] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+    .判断结束
+    
+    .判断开始 (线程锁.尝试进入_文本 (QQ))
+        gs.置Cookie (绑定_读CK (QQ, Tag))
+        res ＝ gs.get_spiralAbyss (绑定_读UID (QQ, Tag), schedule_type)
+        
+        .判断开始 (data.从JSON载入 (res, , , ))
+            .如果真 (取反 (data.取逻辑值 (“//is_unlock”)))
+                .判断开始 (Type ＝ “1”)
+                    CQ.发送私聊消息 (QQ, “该玩家未挑战本期深渊”, 假)
+                    日志 (“[深渊] | 该玩家未挑战本期深渊 ( ” ＋ QQ ＋ “ )”)
+                .默认
+                    CQ.发送群消息 (Group, CQ.At (QQ) ＋ “该玩家未挑战本期深渊”, 假)
+                    日志 (“[深渊] | 该玩家未挑战本期深渊 ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ )”)
+                .判断结束
+                返回 ()
+            .如果真结束
+            
+            最深抵达 ＝ data.取文本 (“//max_floor”)
+            战斗次数 ＝ data.取文本 (“//total_battle_times”)
+            胜利次数 ＝ data.取文本 (“//total_win_times”)
+            本期渊星 ＝ data.取文本 (“//total_star”)
+            
+            tmp ＝ “  最深抵达 : ” ＋ 最深抵达 ＋ “  |  战斗次数 : ” ＋ 战斗次数 ＋ “  |  胜利次数 : ” ＋ 胜利次数 ＋ “  |  本期渊星 : ” ＋ 本期渊星 ＋ “  ”
+            加入成员 (str, tmp)
+            
+            iconurl ＝ data.取文本 (“//damage_rank[1].avatar_icon”)
+            正则.创建 (“https://.+/game_record/genshin/character_side_icon/(\w+)\.png”, iconurl)
+            iconfile ＝ 图片目录 ＋ “character_side_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+            最强一击_人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_Side_”, “”, , , 真)
+            最强一击_数值 ＝ data.取文本 (“//damage_rank[1].value”)
+            最强一击_图片 ＝ iconfile
+            
+            .如果真 (取反 (路径_是否为文件 (iconfile)))
+                c.执行下载 (iconurl, iconfile, )
+            .如果真结束
+            
+            tmp ＝ “  最强一击 : ” ＋ 最强一击_数值 ＋ #换行符 ＋ 取重复文本 (22, “ ”) ＋ #换行符 ＋ 取重复文本 (10, “ ”) ＋ 最强一击_人物 ＋ “  |”
+            
+            iconurl ＝ data.取文本 (“//take_damage_rank[1].avatar_icon”)
+            正则.创建 (“https://.+/game_record/genshin/character_side_icon/(\w+)\.png”, iconurl)
+            iconfile ＝ 图片目录 ＋ “character_side_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+            最强肉盾_人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_Side_”, “”, , , 真)
+            最强肉盾_数值 ＝ data.取文本 (“//take_damage_rank[1].value”)
+            最强肉盾_图片 ＝ iconfile
+            
+            .如果真 (取反 (路径_是否为文件 (iconfile)))
+                c.执行下载 (iconurl, iconfile, )
+            .如果真结束
+            
+            tmp ＝ tmp ＋ “  最强肉盾 : ” ＋ 最强肉盾_数值 ＋ #换行符 ＋ 取重复文本 (22, “ ”) ＋ #换行符 ＋ 取重复文本 (10, “ ”) ＋ 最强肉盾_人物 ＋ “  |”
+            
+            iconurl ＝ data.取文本 (“//normal_skill_rank[1].avatar_icon”)
+            正则.创建 (“https://.+/game_record/genshin/character_side_icon/(\w+)\.png”, iconurl)
+            iconfile ＝ 图片目录 ＋ “character_side_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+            元素技能_人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_Side_”, “”, , , 真)
+            元素技能_数值 ＝ data.取文本 (“//normal_skill_rank[1].value”)
+            元素技能_图片 ＝ iconfile
+            
+            .如果真 (取反 (路径_是否为文件 (iconfile)))
+                c.执行下载 (iconurl, iconfile, )
+            .如果真结束
+            
+            tmp ＝ tmp ＋ “  元素技能释放 : ” ＋ 元素技能_数值 ＋ #换行符 ＋ 取重复文本 (22, “ ”) ＋ #换行符 ＋ 取重复文本 (10, “ ”) ＋ 元素技能_人物 ＋ “  |”
+            
+            iconurl ＝ data.取文本 (“//energy_skill_rank[1].avatar_icon”)
+            正则.创建 (“https://.+/game_record/genshin/character_side_icon/(\w+)\.png”, iconurl)
+            iconfile ＝ 图片目录 ＋ “character_side_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+            元素爆发_人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_Side_”, “”, , , 真)
+            元素爆发_数值 ＝ data.取文本 (“//energy_skill_rank[1].value”)
+            元素爆发_图片 ＝ iconfile
+            
+            .如果真 (取反 (路径_是否为文件 (iconfile)))
+                c.执行下载 (iconurl, iconfile, )
+            .如果真结束
+            
+            tmp ＝ tmp ＋ “  元素爆发释放 : ” ＋ 元素爆发_数值 ＋ #换行符 ＋ 取重复文本 (22, “ ”) ＋ #换行符 ＋ 取重复文本 (10, “ ”) ＋ 元素爆发_人物 ＋ “  ”
+            
+            加入成员 (str, tmp)
+            
+            总览 ＝ 文本制表_表头 (取数组成员数 (str), 4, str, “ / 本期深渊 \ ” ＋ _get_nickname (QQ, Tag) ＋ “ / ” ＋ 绑定_读UID (QQ, Tag) ＋ “ \ ”)
+            str ＝ 分割文本 (总览, #换行符, )
+            
+            总览画板.创建 (1, 1, #白色, )
+            总览画板.字体属性 (“等距更纱黑体 SC”, 12, , , , , , , )
+            总览画板.置画板尺寸 (总览画板.取文本宽度 (str [1]), 总览画板.取文本高度 (str [1]) × 取数组成员数 (str))
+            总览画板.置写出位置 (0, 0, 假)
+            总览画板.写出 (总览)
+            
+            总览画板.画图片 (总览画板.载入图片文件 (最强一击_图片), 总览画板.取文本宽度 (取重复文本 (3, “ ”)), 总览画板.取文本高度 (“ ”) × 5 ＋ 10, 58, 58)
+            总览画板.画图片 (总览画板.载入图片文件 (最强肉盾_图片), 总览画板.取文本宽度 (取重复文本 (26, “ ”)), 总览画板.取文本高度 (“ ”) × 5 ＋ 10, 58, 58)
+            总览画板.画图片 (总览画板.载入图片文件 (元素技能_图片), 总览画板.取文本宽度 (取重复文本 (49, “ ”)), 总览画板.取文本高度 (“ ”) × 5 ＋ 10, 58, 58)
+            总览画板.画图片 (总览画板.载入图片文件 (元素爆发_图片), 总览画板.取文本宽度 (取重复文本 (72, “ ”)), 总览画板.取文本高度 (“ ”) × 5 ＋ 10, 58, 58)
+            总览画板.卸载图片 ()
+            
+            
+            .计次循环首 (data.取数量 (“//floors”), i)
+                层数 ＝ data.取文本 (“//floors[” ＋ 到文本 (i) ＋ “].index”)
+                星数_总 ＝ data.取文本 (“//floors[” ＋ 到文本 (i) ＋ “].star”)
+                
+                清除数组 (str)
+                
+                .计次循环首 (data.取数量 (“//floors[” ＋ 到文本 (i) ＋ “].levels”), ii)
+                    间数 ＝ data.取文本 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].index”)
+                    星数_间 ＝ data.取文本 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].star”)
+                    时间 ＝ 时间_时间戳转文本 (data.取文本 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles[1].timestamp”), 2)
+                    
+                    tmp ＝ “  ” ＋ 层数 ＋ “-” ＋ 间数 ＋ “  |  渊星 : ” ＋ 星数_间 ＋ “/3” ＋ 取重复文本 (10, “ ”) ＋ 时间
+                    加入成员 (str, tmp)
+                    
+                    .计次循环首 (data.取数量 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles”), iii)
+                        
+                        .判断开始 (iii ＝ 1)
+                            tmp ＝ “  上半  |” ＋ #换行符 ＋ #换行符
+                            
+                            .计次循环首 (data.取数量 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles[1].avatars”), iiii)
+                                iconurl ＝ data.取文本 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles[1].avatars[” ＋ 到文本 (iiii) ＋ “].icon”)
+                                正则.创建 (“https://.+/game_record/genshin/character_icon/(\w+)\.png”, iconurl)
+                                iconfile ＝ 图片目录 ＋ “character_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+                                人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_”, “”, , , 真)
+                                
+                                .如果真 (取反 (路径_是否为文件 (iconfile)))
+                                    c.执行下载 (iconurl, iconfile, )
+                                .如果真结束
+                                
+                                .判断开始 (iiii ＝ 1)
+                                    长度 ＝ 取文本长度 (人物)
+                                    tmp ＝ tmp ＋ 取重复文本 (3, “ ”) ＋ 人物
+                                    
+                                .默认
+                                    长度 ＝ 12 － 长度
+                                    tmp ＝ tmp ＋ 取重复文本 (长度, “ ”) ＋ 人物
+                                    长度 ＝ 取文本长度 (人物)
+                                .判断结束
+                                
+                            .计次循环尾 ()
+                            tmp ＝ tmp ＋ “  ”
+                            加入成员 (str, tmp)
+                            
+                        .判断 (iii ＝ 2)
+                            tmp ＝ “  下半  |” ＋ #换行符 ＋ #换行符
+                            
+                            .计次循环首 (data.取数量 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles[2].avatars”), iiii)
+                                iconurl ＝ data.取文本 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles[2].avatars[” ＋ 到文本 (iiii) ＋ “].icon”)
+                                正则.创建 (“https://.+/game_record/genshin/character_icon/(\w+)\.png”, iconurl)
+                                iconfile ＝ 图片目录 ＋ “character_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+                                人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_”, “”, , , 真)
+                                
+                                .如果真 (取反 (路径_是否为文件 (iconfile)))
+                                    c.执行下载 (iconurl, iconfile, )
+                                .如果真结束
+                                
+                                .判断开始 (iiii ＝ 1)
+                                    长度 ＝ 取文本长度 (人物)
+                                    tmp ＝ tmp ＋ 取重复文本 (3, “ ”) ＋ 人物
+                                    
+                                .默认
+                                    长度 ＝ 12 － 长度
+                                    tmp ＝ tmp ＋ 取重复文本 (长度, “ ”) ＋ 人物
+                                    长度 ＝ 取文本长度 (人物)
+                                .判断结束
+                                
+                            .计次循环尾 ()
+                            tmp ＝ tmp ＋ “  ”
+                            加入成员 (str, tmp)
+                        .默认
+                            
+                        .判断结束
+                        
+                    .计次循环尾 ()
+                .计次循环尾 ()
+                
+                .判断开始 (data.取数量 (“//floors”) ＝ i)
+                    详细 ＝ 详细 ＋ 文本制表_表头 (取数组成员数 (str), 2, str, “ / 本期深渊 \ 第” ＋ 层数 ＋ “层 / 渊星 : ” ＋ 星数_总 ＋ “ \ ”)
+                .默认
+                    详细 ＝ 详细 ＋ 文本制表_表头 (取数组成员数 (str), 2, str, “ / 本期深渊 \ 第” ＋ 层数 ＋ “层 / 渊星 : ” ＋ 星数_总 ＋ “ \ ”) ＋ #换行符
+                .判断结束
+                
+            .计次循环尾 ()
+            str ＝ 分割文本 (详细, #换行符, )
+            
+            详细画板.创建 (1, 1, #白色, )
+            详细画板.字体属性 (“等距更纱黑体 SC”, 12, , , , , , , )
+            详细画板.置画板尺寸 (详细画板.取文本宽度 (str [1]), 详细画板.取文本高度 (str [1]) × 取数组成员数 (str))
+            详细画板.置写出位置 (0, 0, 假)
+            详细画板.写出 (详细)
+            
+            
+            .计次循环首 (data.取数量 (“//floors”), i)
+                
+                .计次循环首 (data.取数量 (“//floors[” ＋ 到文本 (i) ＋ “].levels”), ii)
+                    
+                    .计次循环首 (data.取数量 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles”), iii)
+                        
+                        .判断开始 (iii ＝ 1)
+                            .计次循环首 (data.取数量 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles[1].avatars”), iiii)
+                                iconurl ＝ data.取文本 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles[1].avatars[” ＋ 到文本 (iiii) ＋ “].icon”)
+                                正则.创建 (“https://.+/game_record/genshin/character_icon/(\w+)\.png”, iconurl)
+                                iconfile ＝ 图片目录 ＋ “character_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+                                人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_”, “”, , , 真)
+                                
+                                .如果真 (取反 (路径_是否为文件 (iconfile)))
+                                    c.执行下载 (iconurl, iconfile, )
+                                .如果真结束
+                                
+                                .判断开始 (iiii ＝ 1)
+                                    左边 ＝ 详细画板.取文本宽度 (取重复文本 (13, “ ”))
+                                    顶边 ＝ 顶边 ＋ 详细画板.取文本高度 (“ ”) × 5 － 8
+                                    
+                                    详细画板.画图片 (详细画板.载入图片文件 (iconfile), 左边, 顶边, 48, 48)
+                                    
+                                    长度 ＝ 取文本长度 (人物)
+                                    左边 ＝ 左边 ＋ 详细画板.取文本宽度 (取重复文本 (长度, “ ”))
+                                    
+                                .默认
+                                    长度 ＝ 12 － 长度
+                                    左边 ＝ 左边 ＋ 详细画板.取文本宽度 (取重复文本 (长度, “ ”))
+                                    
+                                    详细画板.画图片 (详细画板.载入图片文件 (iconfile), 左边, 顶边, 48, 48)
+                                    
+                                    长度 ＝ 取文本长度 (人物)
+                                    左边 ＝ 左边 ＋ 详细画板.取文本宽度 (取重复文本 (长度, “ ”))
+                                .判断结束
+                                
+                            .计次循环尾 ()
+                            
+                            
+                        .判断 (iii ＝ 2)
+                            .计次循环首 (data.取数量 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles[2].avatars”), iiii)
+                                iconurl ＝ data.取文本 (“//floors[” ＋ 到文本 (i) ＋ “].levels[” ＋ 到文本 (ii) ＋ “].battles[2].avatars[” ＋ 到文本 (iiii) ＋ “].icon”)
+                                正则.创建 (“https://.+/game_record/genshin/character_icon/(\w+)\.png”, iconurl)
+                                iconfile ＝ 图片目录 ＋ “character_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+                                人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_”, “”, , , 真)
+                                
+                                .如果真 (取反 (路径_是否为文件 (iconfile)))
+                                    c.执行下载 (iconurl, iconfile, )
+                                .如果真结束
+                                
+                                .判断开始 (iiii ＝ 1)
+                                    左边 ＝ 详细画板.取文本宽度 (取重复文本 (13, “ ”))
+                                    顶边 ＝ 顶边 ＋ 详细画板.取文本高度 (“ ”) × 4
+                                    
+                                    详细画板.画图片 (详细画板.载入图片文件 (iconfile), 左边, 顶边, 48, 48)
+                                    
+                                    长度 ＝ 取文本长度 (人物)
+                                    左边 ＝ 左边 ＋ 详细画板.取文本宽度 (取重复文本 (长度, “ ”))
+                                    
+                                .默认
+                                    长度 ＝ 12 － 长度
+                                    左边 ＝ 左边 ＋ 详细画板.取文本宽度 (取重复文本 (长度, “ ”))
+                                    
+                                    详细画板.画图片 (详细画板.载入图片文件 (iconfile), 左边, 顶边, 48, 48)
+                                    
+                                    长度 ＝ 取文本长度 (人物)
+                                    左边 ＝ 左边 ＋ 详细画板.取文本宽度 (取重复文本 (长度, “ ”))
+                                    
+                                .判断结束
+                                
+                            .计次循环尾 ()
+                            
+                        .默认
+                            
+                        .判断结束
+                        
+                    .计次循环尾 ()
+                    顶边 ＝ 顶边 ＋ 详细画板.取文本高度 (“ ”) ＋ 8
+                    
+                .计次循环尾 ()
+                顶边 ＝ 顶边 ＋ 详细画板.取文本高度 (“ ”) × 3
+                
+            .计次循环尾 ()
+            
+            顶边 ＝ 总览画板.取画板高度 ()
+            总览画板.置画板尺寸 (, 总览画板.取画板高度 () ＋ 详细画板.取画板高度 ())
+            总览画板.画图片 (总览画板.载入图片数据 (详细画板.取图片 ()), 0, 顶边, , , 0)
+            
+            img.加载数据 (总览画板.取图片 ())
+            
+            b64 ＝ Base64编码 (img.取出图片数据 (0), )
+            总览画板.销毁 ()
+            详细画板.销毁 ()
+            img.释放 ()
+            
+            .判断开始 (Type ＝ “1”)
+                CQ.发送私聊消息 (QQ, CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .默认
+                CQ.发送群消息 (Group, CQ.At (QQ) ＋ CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .判断结束
+            
+            
+        .判断 (Type ＝ “1”)
+            CQ.发送私聊消息 (QQ, “[get_spiralAbyss] ” ＋ res, 假)
+            日志 (“[深渊] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .默认
+            CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_spiralAbyss] ” ＋ res, 假)
+            日志 (“[深渊] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .判断结束
+        
+        线程锁.删除标识_文本 (QQ)
+        
+    .判断 (Type ＝ “1”)
+        CQ.发送私聊消息 (QQ, “不要着急嘛~~~要不打个手枪?”, 假)
+    .默认
+        CQ.发送群消息 (Group, CQ.At (QQ) ＋ “不要着急嘛~~~要不打个手枪?”, 假)
+    .判断结束
+    
+    
+
+.子程序 角色
+    .参数 Type, 文本型
+    .参数 QQ, 文本型
+    .参数 Group, 文本型
+    .参数 Tag, 文本型
+    .局部变量 gs, GenshinAPI
+    .局部变量 res, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 i, 整数型
+    .局部变量 ii, 整数型
+    .局部变量 名字, 文本型
+    .局部变量 等级, 文本型
+    .局部变量 好感, 文本型
+    .局部变量 命座, 文本型
+    .局部变量 左边, 整数型
+    .局部变量 顶边, 整数型
+    .局部变量 正则, 正则表达式类
+    .局部变量 iconurl, 文本型
+    .局部变量 iconfile, 文本型
+    .局部变量 c, 网站客户端
+    .局部变量 str, 文本型, , "0"
+    .局部变量 tmp, 文本型
+    .局部变量 hb, 内存画板
+    .局部变量 img, 图片对象
+    .局部变量 b64, 文本型
+
+    .判断开始 (Type ＝ “1”)
+        日志 (“[角色] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+    .默认
+        日志 (“[角色] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+    .判断结束
+    
+    .判断开始 (线程锁.尝试进入_文本 (QQ))
+        gs.置Cookie (绑定_读CK (QQ, Tag))
+        res ＝ gs.get_user_stats (绑定_读UID (QQ, Tag))
+        
+        .判断开始 (data.从JSON载入 (res, , , ))
+            
+            .计次循环首 (data.取数量 (“//avatars”), i)
+                名字 ＝ data.取文本 (“//avatars[” ＋ 到文本 (i) ＋ “].name”)
+                等级 ＝ data.取文本 (“//avatars[” ＋ 到文本 (i) ＋ “].level”)
+                好感 ＝ data.取文本 (“//avatars[” ＋ 到文本 (i) ＋ “].fetter”)
+                命座 ＝ data.取文本 (“//avatars[” ＋ 到文本 (i) ＋ “].actived_constellation_num”)
+                
+                .判断开始 (i ％ 5 ＝ 0)
+                    tmp ＝ tmp ＋ #换行符 ＋ #换行符 ＋ “  ” ＋ 名字 ＋ “  ” ＋ #换行符 ＋ “  等级 : ” ＋ 等级 ＋ “  ” ＋ #换行符 ＋ “  好感 : ” ＋ 好感 ＋ “  ” ＋ #换行符 ＋ “  命座 : ” ＋ 命座 ＋ “  ”
+                    加入成员 (str, tmp)
+                    tmp ＝ “”
+                    
+                .默认
+                    tmp ＝ tmp ＋ #换行符 ＋ #换行符 ＋ “  ” ＋ 名字 ＋ “  ” ＋ #换行符 ＋ “  等级 : ” ＋ 等级 ＋ “  ” ＋ #换行符 ＋ “  好感 : ” ＋ 好感 ＋ “  ” ＋ #换行符 ＋ “  命座 : ” ＋ 命座 ＋ “  |”
+                    
+                .判断结束
+                
+                .如果真 (data.取数量 (“//avatars”) ＝ i)
+                    
+                    .判断开始 (i ％ 5 ＞ 1)
+                        
+                        .计次循环首 (i ％ 5, ii)
+                            tmp ＝ tmp ＋ “  \\\  |”
+                            
+                            .如果真 (i ％ 5 ＝ ii)
+                                tmp ＝ tmp ＋ “  \\\  ”
+                            .如果真结束
+                            
+                        .计次循环尾 ()
+                        加入成员 (str, tmp)
+                        
+                    .判断 (i ％ 5 ＝ 1)
+                        tmp ＝ tmp ＋ “  \\\  ”
+                        加入成员 (str, tmp)
+                    .默认
+                        
+                    .判断结束
+                    
+                .如果真结束
+                
+            .计次循环尾 ()
+            
+            tmp ＝ 文本制表_表头 (取数组成员数 (str), 5, str, “ / 角色概览 \ ” ＋ _get_nickname (QQ, Tag) ＋ “ / ” ＋ 绑定_读UID (QQ, Tag) ＋ “ \ ”)
+            str ＝ 分割文本 (tmp, #换行符, )
+            
+            hb.创建 (1, 1, #白色, )
+            hb.字体属性 (“等距更纱黑体 SC”, 18, , , , , , , )
+            hb.置画板尺寸 (hb.取文本宽度 (str [1]), hb.取文本高度 (str [1]) × 取数组成员数 (str))
+            hb.置写出位置 (0, 0, 假)
+            hb.写出 (tmp)
+            
+            顶边 ＝ hb.取文本高度 (“ ”) × 3 － 8
+            
+            .计次循环首 (data.取数量 (“//avatars”), i)
+                iconurl ＝ data.取文本 (“//avatars[” ＋ 到文本 (i) ＋ “].image”)
+                正则.创建 (“https://.+/game_record/genshin/character_icon/(\w+)\.png”, iconurl)
+                iconfile ＝ 图片目录 ＋ “character_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+                
+                .如果真 (取反 (路径_是否为文件 (iconfile)))
+                    c.执行下载 (iconurl, iconfile, )
+                .如果真结束
+                
+                
+                .判断开始 (i ％ 5 ＝ 0)
+                    左边 ＝ 左边 ＋ hb.取文本宽度 (取重复文本 (3, “ ”))
+                    hb.画图片 (hb.载入图片文件 (iconfile), 左边, 顶边, 64, 64)
+                    左边 ＝ 0
+                    顶边 ＝ 顶边 ＋ hb.取文本高度 (“ ”) × 7
+                    
+                .默认
+                    左边 ＝ 左边 ＋ hb.取文本宽度 (取重复文本 (3, “ ”))
+                    hb.画图片 (hb.载入图片文件 (iconfile), 左边, 顶边, 64, 64)
+                    左边 ＝ 左边 ＋ hb.取文本宽度 (取重复文本 (12, “ ”))
+                    
+                .判断结束
+                
+            .计次循环尾 ()
+            
+            img.加载数据 (hb.取图片 ())
+            b64 ＝ Base64编码 (img.取出图片数据 (0), )
+            hb.销毁 ()
+            img.释放 ()
+            
+            .判断开始 (Type ＝ “1”)
+                CQ.发送私聊消息 (QQ, CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .默认
+                CQ.发送群消息 (Group, CQ.At (QQ) ＋ CQ.Image (“base64://” ＋ b64, , “0”), 假)
+            .判断结束
+            
+        .判断 (Type ＝ “1”)
+            CQ.发送私聊消息 (QQ, “[get_user_stats] ” ＋ res, 假)
+            日志 (“[角色] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .默认
+            CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_user_stats] ” ＋ res, 假)
+            日志 (“[角色] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+        .判断结束
+        
+        线程锁.删除标识_文本 (QQ)
+        
+    .判断 (Type ＝ “1”)
+        CQ.发送私聊消息 (QQ, “不要着急嘛~~~要不打个手枪?”, 假)
+    .默认
+        CQ.发送群消息 (Group, CQ.At (QQ) ＋ “不要着急嘛~~~要不打个手枪?”, 假)
+    .判断结束
+    
+    
+

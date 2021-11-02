@@ -1,0 +1,43 @@
+﻿.版本 2
+
+.DLL命令 PeekMessage, 逻辑型, "user32.dll", "PeekMessageA", , 系统_处理事件1
+    .参数 lpMsg, MSG
+    .参数 hwnd, 整数型
+    .参数 wMsgFilterMin, 整数型
+    .参数 wMsgFilterMax, 整数型
+    .参数 wRemoveMsg, 整数型
+
+.DLL命令 TranslateMessage, 逻辑型, "user32.dll", "TranslateMessage", , 系统_处理事件1
+    .参数 消息结构, MSG, , lpMsg
+
+.DLL命令 DispatchMessage, 整数型, "user32.dll", "DispatchMessageA", , 系统_处理事件1
+    .参数 消息结构, MSG, , lpMsg
+
+.DLL命令 VariantTimeToSystemTime, 整数型, "oleaut32.dll", "VariantTimeToSystemTime"
+    .参数 vtime, 日期时间型
+    .参数 lpSystemTime, 精易_时间
+
+.DLL命令 GetDateFormatA, 整数型, "kernel32.dll", "GetDateFormatA", , 针对指定的“当地”格式，对一个系统日期进行格式化  格式化过后的字串的长度。
+    .参数 地方ID, 整数型, , Locale，用于决定格式的地方ID。lpFormat参数中指定的任何信息（倘若不是NULL）都优先于特定于地方的信息
+    .参数 标志, 整数型, , dwFlags，如指定了lpFormat，那么该参数应该为零。否则，可设为LOCALE_NOUSEROVERRIDE，强制使用系统地方参数——即使它们已由用户取代。
+    .参数 日期结构, 精易_时间, , lpDate，包含了一个系统日期的结构
+    .参数 格式化, 文本型, , lpFormat，String，可设为NULL，使用特定于不同地方的值（用vbNullString传递一个NULL）。否则包含一个日期格式字串。
+    .参数 缓冲区文本, 文本型, , lpDateStr，指定一个缓冲区，用于容纳格式化过后的字串。注意事先对字串进行初始化
+    .参数 缓冲区文本长度, 整数型, , cchDate，缓冲区的长度。如为零，表示函数会返回需要缓冲区的大小;
+
+.DLL命令 GetTimeFormatA, 整数型, "kernel32.dll", "GetTimeFormatA", , _系统置时间进行格式化 针对指定的“当地”格式，对一个系统时间进行格式化。
+    .参数 地方ID, 整数型, , Locale，用于决定格式的地方ID。lpFormat参数中指定的任何信息（倘若不是NULL）都优先于特定于地方的信息
+    .参数 标志, 整数型, , dwFlags，如指定了lpFormat，那么该参数应该为零。否则，可设为LOCALE_NOUSEROVERRIDE，强制使用系统地方参数
+    .参数 时间结构, 精易_时间, , lpDate，SYSTEMTIME，用于包容系统时间的一个结构
+    .参数 格式化, 文本型, , lpFormat，String，可设为NULL，使用特定于不同地方的值（用vbNullString传递一个NULL）。
+    .参数 缓冲区文本, 文本型, , lpDateStr，指定一个缓冲区，用于容纳格式化过后的字串。注意事先对字串进行初始化
+    .参数 缓冲区文本长度, 整数型, , cchDate，缓冲区的长度。如为零，表示函数会返回需要缓冲区的大小;
+
+.DLL命令 GetLocaleInfo, 整数型, "kernel32.dll", "GetLocaleInfoA"
+    .参数 地方ID, 整数型
+    .参数 类型, 整数型
+    .参数 数据, 文本型
+    .参数 数据尺寸, 整数型
+
+.DLL命令 DLL命令1
+

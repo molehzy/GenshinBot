@@ -4,3 +4,6 @@
 [submodule "go-cqhttp-e"]
 	path = go-cqhttp-e
 	url = https://github.com/molehzy/go-cqhttp-e
+[submodule "Text-table"]
+	path = Text-table
+	url = https://github.com/molehzy/Text-table

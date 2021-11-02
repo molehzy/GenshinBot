@@ -1,0 +1,21 @@
+﻿.版本 2
+
+.数据类型 数_好友, 公开
+    .成员 user_id, 文本型, , , QQ 号
+    .成员 nickname, 文本型, , , 昵称
+    .成员 remark, 文本型, , , 备注名
+
+.数据类型 数_群, 公开
+    .成员 group_id, 文本型, , , 群号
+    .成员 group_name, 文本型, , , 群名称
+    .成员 member_count, 文本型, , , 成员数
+    .成员 max_member_count, 文本型, , , 最大成员数（群容量）
+
+.数据类型 数_data, 公开
+    .成员 title, 文本型
+    .成员 value, 文本型
+
+.数据类型 数_button, 公开
+    .成员 name, 文本型
+    .成员 action, 文本型
+

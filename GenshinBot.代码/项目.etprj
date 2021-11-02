@@ -1,0 +1,12 @@
+{
+    "AsyncFile": true,
+    "E2TXT-EFile": "",
+    "E2TXT-InSourceDir": true,
+    "E2TXT-IsCreateE": true,
+    "Encoding": "UTF-8",
+    "Level": 1,
+    "NameStyle": 2,
+    "Password": "",
+    "ResetNames": [],
+    "Source": "../GenshinBot.e"
+}

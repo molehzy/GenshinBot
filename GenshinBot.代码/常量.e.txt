@@ -1,0 +1,9 @@
+﻿.版本 2
+
+.常量 LOCALE_ITIME, "35"
+.常量 TIME_FORCE24HOURFORMAT, "8"
+
+
+
+
+
