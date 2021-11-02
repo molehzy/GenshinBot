@@ -1,9 +1,9 @@
-[submodule "GenshinAPI"]
-	path = GenshinAPI
+[submodule "模块/GenshinAPI"]
+	path = 模块/GenshinAPI
 	url = https://github.com/molehzy/GenshinAPI
-[submodule "go-cqhttp-e"]
-	path = go-cqhttp-e
+[submodule "模块/go-cqhttp-e"]
+	path = 模块/go-cqhttp-e
 	url = https://github.com/molehzy/go-cqhttp-e
-[submodule "Text-table"]
-	path = Text-table
+[submodule "模块/Text-table"]
+	path = 模块/Text-table
 	url = https://github.com/molehzy/Text-table
