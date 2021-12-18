@@ -29,7 +29,7 @@
     
 
 .子程序 _按钮_Debug_被单击
-    角色_Debug (UTF8到文本 (读入文件 (取运行目录 () ＋ “/get_user_stats.txt”)))
+    ' 角色_Debug (UTF8到文本 (读入文件 (取运行目录 () ＋ “/get_user_stats.txt”)))
     
     
 
