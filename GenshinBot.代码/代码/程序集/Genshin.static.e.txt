@@ -76,9 +76,9 @@
     .局部变量 b64, 文本型
 
     .判断开始 (Type ＝ “1”)
-        日志 (“[实时便笺] ( ” ＋ QQ ＋ “ ) | 线程启动 ”)
+        _日志 (“[实时便笺] ( ” ＋ QQ ＋ “ ) | 线程启动 ”)
     .默认
-        日志 (“[实时便笺] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动 ”)
+        _日志 (“[实时便笺] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动 ”)
     .判断结束
     
     .判断开始 (线程锁.尝试进入_文本 (QQ))
@@ -174,10 +174,10 @@
             
         .判断 (Type ＝ “1”)
             CQ.发送私聊消息 (QQ, “[get_dailyNote] ” ＋ res, 假)
-            日志 (“[实时便笺] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[实时便笺] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
         .默认
             CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_dailyNote] ” ＋ res, 假)
-            日志 (“[实时便笺] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[实时便笺] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
         .判断结束
         
         线程锁.删除标识_文本 (QQ)
@@ -227,9 +227,9 @@
     .局部变量 b64, 文本型
 
     .判断开始 (Type ＝ “1”)
-        日志 (“[数据总览] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[数据总览] ( ” ＋ QQ ＋ “ ) | 线程启动”)
     .默认
-        日志 (“[数据总览] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[数据总览] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
     .判断结束
     
     .判断开始 (线程锁.尝试进入_文本 (QQ))
@@ -313,10 +313,10 @@
             
         .判断 (Type ＝ “1”)
             CQ.发送私聊消息 (QQ, “[get_user_stats] ” ＋ res, 假)
-            日志 (“[数据总览] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[数据总览] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
         .默认
             CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_user_stats] ” ＋ res, 假)
-            日志 (“[数据总览] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[数据总览] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
         .判断结束
         
         线程锁.删除标识_文本 (QQ)
@@ -349,9 +349,9 @@
     .局部变量 b64, 文本型
 
     .判断开始 (Type ＝ “1”)
-        日志 (“[手札] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[手札] ( ” ＋ QQ ＋ “ ) | 线程启动”)
     .默认
-        日志 (“[手札] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[手札] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
     .判断结束
     
     .判断开始 (线程锁.尝试进入_文本 (QQ))
@@ -400,10 +400,10 @@
             
         .判断 (Type ＝ “1”)
             CQ.发送私聊消息 (QQ, “[get_monthInfo_CN] ” ＋ res, 假)
-            日志 (“[手札] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[手札] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
         .默认
             CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_monthInfo_CN] ” ＋ res, 假)
-            日志 (“[手札] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[手札] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
         .判断结束
         
         线程锁.删除标识_文本 (QQ)
@@ -430,9 +430,9 @@
     .局部变量 物品数量, 文本型
 
     .判断开始 (Type ＝ “1”)
-        日志 (“[签到] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[签到] ( ” ＋ QQ ＋ “ ) | 线程启动”)
     .默认
-        日志 (“[签到] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[签到] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
     .判断结束
     
     .判断开始 (线程锁.尝试进入_文本 (QQ))
@@ -463,18 +463,18 @@
                             
                         .判断 (Type ＝ “1”)
                             CQ.发送私聊消息 (QQ, “[get_signinInfo_CN] ” ＋ res, 假)
-                            日志 (“[get_signinInfo_CN] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                            _日志 (“[get_signinInfo_CN] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
                         .默认
                             CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_signinInfo_CN] ” ＋ res, 假)
-                            日志 (“[get_signinInfo_CN] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                            _日志 (“[get_signinInfo_CN] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
                         .判断结束
                         
                     .判断 (Type ＝ “1”)
                         CQ.发送私聊消息 (QQ, “[get_sign_CN] ” ＋ res, 假)
-                        日志 (“[get_sign_CN] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                        _日志 (“[get_sign_CN] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
                     .默认
                         CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_sign_CN] ” ＋ res, 假)
-                        日志 (“[get_sign_CN] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                        _日志 (“[get_sign_CN] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
                     .判断结束
                     
                 .判断 (Type ＝ “1”)
@@ -485,10 +485,10 @@
                 
             .判断 (Type ＝ “1”)
                 CQ.发送私聊消息 (QQ, “[get_signinInfo_CN] ” ＋ res, 假)
-                日志 (“[get_signinInfo_CN] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                _日志 (“[get_signinInfo_CN] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
             .默认
                 CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_signinInfo_CN] ” ＋ res, 假)
-                日志 (“[get_signinInfo_CN] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                _日志 (“[get_signinInfo_CN] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
             .判断结束
             
             
@@ -516,18 +516,18 @@
                             
                         .判断 (Type ＝ “1”)
                             CQ.发送私聊消息 (QQ, “[get_signinInfo_OS] ” ＋ res, 假)
-                            日志 (“[get_signinInfo_OS] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                            _日志 (“[get_signinInfo_OS] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
                         .默认
                             CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_signinInfo_OS] ” ＋ res, 假)
-                            日志 (“[get_signinInfo_OS] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                            _日志 (“[get_signinInfo_OS] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
                         .判断结束
                         
                     .判断 (Type ＝ “1”)
                         CQ.发送私聊消息 (QQ, “[get_sign_OS] ” ＋ res, 假)
-                        日志 (“[get_sign_OS] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                        _日志 (“[get_sign_OS] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
                     .默认
                         CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_sign_OS] ” ＋ res, 假)
-                        日志 (“[get_sign_OS] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                        _日志 (“[get_sign_OS] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
                     .判断结束
                     
                 .判断 (Type ＝ “1”)
@@ -538,10 +538,10 @@
                 
             .判断 (Type ＝ “1”)
                 CQ.发送私聊消息 (QQ, “[get_signinInfo_OS] ” ＋ res, 假)
-                日志 (“[get_signinInfo_OS] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+                _日志 (“[get_signinInfo_OS] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
             .默认
                 CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_signinInfo_OS] ” ＋ res, 假)
-                日志 (“[get_signinInfo_OS] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+                _日志 (“[get_signinInfo_OS] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
             .判断结束
             
         .判断结束
@@ -608,9 +608,9 @@
     .局部变量 b64, 文本型
 
     .判断开始 (Type ＝ “1”)
-        日志 (“[深渊] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[深渊] ( ” ＋ QQ ＋ “ ) | 线程启动”)
     .默认
-        日志 (“[深渊] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[深渊] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
     .判断结束
     
     .判断开始 (线程锁.尝试进入_文本 (QQ))
@@ -621,10 +621,10 @@
             .如果真 (data.取整数 (“//total_battle_times”) ＝ 0)
                 .判断开始 (Type ＝ “1”)
                     CQ.发送私聊消息 (QQ, “该玩家未挑战本期深渊”, 假)
-                    日志 (“[深渊] | 该玩家未挑战本期深渊 ( ” ＋ QQ ＋ “ )”)
+                    _日志 (“[深渊] | 该玩家未挑战本期深渊 ( ” ＋ QQ ＋ “ )”)
                 .默认
                     CQ.发送群消息 (Group, CQ.At (QQ) ＋ “该玩家未挑战本期深渊”, 假)
-                    日志 (“[深渊] | 该玩家未挑战本期深渊 ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ )”)
+                    _日志 (“[深渊] | 该玩家未挑战本期深渊 ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ )”)
                 .判断结束
                 线程锁.删除标识_文本 (QQ)
                 返回 ()
@@ -909,10 +909,10 @@
             
         .判断 (Type ＝ “1”)
             CQ.发送私聊消息 (QQ, “[get_spiralAbyss] ” ＋ res, 假)
-            日志 (“[深渊] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[深渊] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
         .默认
             CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_spiralAbyss] ” ＋ res, 假)
-            日志 (“[深渊] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[深渊] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
         .判断结束
         
         线程锁.删除标识_文本 (QQ)
@@ -953,9 +953,9 @@
     .局部变量 b64, 文本型
 
     .判断开始 (Type ＝ “1”)
-        日志 (“[角色] ( ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[角色] ( ” ＋ QQ ＋ “ ) | 线程启动”)
     .默认
-        日志 (“[角色] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
+        _日志 (“[角色] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | 线程启动”)
     .判断结束
     
     .判断开始 (线程锁.尝试进入_文本 (QQ))
@@ -1050,10 +1050,10 @@
             
         .判断 (Type ＝ “1”)
             CQ.发送私聊消息 (QQ, “[get_user_stats] ” ＋ res, 假)
-            日志 (“[角色] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[角色] ( ” ＋ QQ ＋ “ ) | ” ＋ res)
         .默认
             CQ.发送群消息 (Group, CQ.At (QQ) ＋ “[get_user_stats] ” ＋ res, 假)
-            日志 (“[角色] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
+            _日志 (“[角色] ( ” ＋ Group ＋ “ | ” ＋ QQ ＋ “ ) | ” ＋ res)
         .判断结束
         
         线程锁.删除标识_文本 (QQ)

@@ -2,6 +2,8 @@
 
 ###### 内存画板使用字体  [Sarasa-Gothic](https://mirrors.tuna.tsinghua.edu.cn/github-release/be5invis/Sarasa-Gothic/)
 
+######  [简单说明](https://github.com/molehzy/GenshinBot/wiki/%E7%AE%80%E5%8D%95%E8%AF%B4%E6%98%8E)
+
 #### 支持库
 
 - E2EE  [http://e2ee.jimstone.com.cn/downloads/](http://e2ee.jimstone.com.cn/downloads/)  
