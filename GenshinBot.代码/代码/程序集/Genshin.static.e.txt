@@ -69,6 +69,9 @@
     .局部变量 派遣_状态, 文本型
     .局部变量 派遣_时间, 文本型
     .局部变量 派遣_人物, 文本型
+    .局部变量 宝钱_现有, 文本型
+    .局部变量 宝钱_上限, 文本型
+    .局部变量 宝钱_时间, 文本型
     .局部变量 str, 文本型, , "0"
     .局部变量 tmp, 文本型
     .局部变量 hb, 内存画板
@@ -92,7 +95,7 @@
             .判断开始 (data.取整数 (“//resin_recovery_time”) ＞ 0)
                 树脂_时间 ＝ 时间_秒到时分秒格式 (data.取整数 (“//resin_recovery_time”), “h:m:s”, 真)
             .默认
-                树脂_时间 ＝ “已溢出”
+                树脂_时间 ＝ “--:--:--”
             .判断结束
             
             每日_完成 ＝ data.取文本 (“//finished_task_num”)
@@ -108,7 +111,17 @@
             派遣_现有 ＝ data.取文本 (“//current_expedition_num”)
             派遣_上限 ＝ data.取文本 (“//max_expedition_num”)
             
+            宝钱_现有 ＝ data.取文本 (“//current_home_coin”)
+            宝钱_上限 ＝ data.取文本 (“//max_home_coin”)
+            .判断开始 (data.取整数 (“//home_coin_recovery_time”) ＞ 0)
+                宝钱_时间 ＝ 时间_秒到时分秒格式 (data.取整数 (“//home_coin_recovery_time”), “d:h:m:s”, 真)
+            .默认
+                宝钱_时间 ＝ “--:--:--”
+            .判断结束
+            
             tmp ＝ “  树脂 : ” ＋ 树脂_现有 ＋ “/” ＋ 树脂_上限 ＋ “  |  恢复时间 : ” ＋ 树脂_时间 ＋ “  ”
+            加入成员 (str, tmp)
+            tmp ＝ “  宝钱 : ” ＋ 宝钱_现有 ＋ “/” ＋ 宝钱_上限 ＋ “  |  恢复时间 : ” ＋ 宝钱_时间 ＋ “  ”
             加入成员 (str, tmp)
             tmp ＝ “  每日 : ” ＋ 每日_完成 ＋ “/” ＋ 每日_上限 ＋ “  |  NPC奖励 : ” ＋ 每日_奖励 ＋ “  ”
             加入成员 (str, tmp)
@@ -156,7 +169,7 @@
                     c.执行下载 (iconurl, iconfile, )
                 .如果真结束
                 
-                hb.画图片 (hb.载入图片文件 (iconfile), 5, 125 ＋ i × 40, 40, 40, )
+                hb.画图片 (hb.载入图片文件 (iconfile), 5, 165 ＋ i × 40, 40, 40, )
                 hb.卸载图片 ()
                 
             .计次循环尾 ()
@@ -1163,7 +1176,129 @@
     .计次循环尾 ()
     
     img.加载数据 (hb.取图片 ())
-    写到文件 (取运行目录 () ＋ “/get_user_stats.png”, img.取出图片数据 (0))
+    写到文件 (取运行目录 () ＋ “\get_user_stats.png”, img.取出图片数据 (0))
+    hb.销毁 ()
+    img.释放 ()
+    
+
+.子程序 实时便笺_Debug
+    .参数 json, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 i, 整数型
+    .局部变量 正则, 正则表达式类
+    .局部变量 iconurl, 文本型
+    .局部变量 iconfile, 文本型
+    .局部变量 c, 网站客户端
+    .局部变量 树脂_现有, 文本型
+    .局部变量 树脂_上限, 文本型
+    .局部变量 树脂_时间, 文本型
+    .局部变量 每日_完成, 文本型
+    .局部变量 每日_上限, 文本型
+    .局部变量 每日_奖励, 文本型
+    .局部变量 周本_现有, 文本型
+    .局部变量 周本_上限, 文本型
+    .局部变量 派遣_现有, 文本型
+    .局部变量 派遣_上限, 文本型
+    .局部变量 派遣_状态, 文本型
+    .局部变量 派遣_时间, 文本型
+    .局部变量 派遣_人物, 文本型
+    .局部变量 宝钱_现有, 文本型
+    .局部变量 宝钱_上限, 文本型
+    .局部变量 宝钱_时间, 文本型
+    .局部变量 str, 文本型, , "0"
+    .局部变量 tmp, 文本型
+    .局部变量 hb, 内存画板
+    .局部变量 img, 图片对象
+    .局部变量 b64, 文本型
+
+    data.从JSON载入 (json, , , )
+    
+    树脂_现有 ＝ data.取文本 (“//current_resin”)
+    树脂_上限 ＝ data.取文本 (“//max_resin”)
+    .判断开始 (data.取整数 (“//resin_recovery_time”) ＞ 0)
+        树脂_时间 ＝ 时间_秒到时分秒格式 (data.取整数 (“//resin_recovery_time”), “h:m:s”, 真)
+    .默认
+        树脂_时间 ＝ “--:--:--”
+    .判断结束
+    
+    每日_完成 ＝ data.取文本 (“//finished_task_num”)
+    每日_上限 ＝ data.取文本 (“//total_task_num”)
+    .判断开始 (data.取逻辑值 (“//is_extra_task_reward_received”))
+        每日_奖励 ＝ “已领取”
+    .默认
+        每日_奖励 ＝ “未领取”
+    .判断结束
+    
+    周本_现有 ＝ data.取文本 (“//remain_resin_discount_num”)
+    周本_上限 ＝ data.取文本 (“//resin_discount_num_limit”)
+    派遣_现有 ＝ data.取文本 (“//current_expedition_num”)
+    派遣_上限 ＝ data.取文本 (“//max_expedition_num”)
+    
+    宝钱_现有 ＝ data.取文本 (“//current_home_coin”)
+    宝钱_上限 ＝ data.取文本 (“//max_home_coin”)
+    .判断开始 (data.取整数 (“//home_coin_recovery_time”) ＞ 0)
+        宝钱_时间 ＝ 时间_秒到时分秒格式 (data.取整数 (“//home_coin_recovery_time”), “d:h:m:s”, 真)
+    .默认
+        宝钱_时间 ＝ “--:--:--”
+    .判断结束
+    
+    tmp ＝ “  树脂 : ” ＋ 树脂_现有 ＋ “/” ＋ 树脂_上限 ＋ “  |  恢复时间 : ” ＋ 树脂_时间 ＋ “  ”
+    加入成员 (str, tmp)
+    tmp ＝ “  宝钱 : ” ＋ 宝钱_现有 ＋ “/” ＋ 宝钱_上限 ＋ “  |  恢复时间 : ” ＋ 宝钱_时间 ＋ “  ”
+    加入成员 (str, tmp)
+    tmp ＝ “  每日 : ” ＋ 每日_完成 ＋ “/” ＋ 每日_上限 ＋ “  |  NPC奖励 : ” ＋ 每日_奖励 ＋ “  ”
+    加入成员 (str, tmp)
+    tmp ＝ “  派遣 : ” ＋ 派遣_现有 ＋ “/” ＋ 派遣_上限 ＋ “  |  周本半价 : ” ＋ 周本_现有 ＋ “/” ＋ 周本_上限 ＋ “  ”
+    加入成员 (str, tmp)
+    
+    .计次循环首 (data.取数量 (“//expeditions”), i)
+        iconurl ＝ data.取文本 (“//expeditions[” ＋ 到文本 (i) ＋ “].avatar_side_icon”)
+        正则.创建 (“https://.+/game_record/genshin/character_side_icon/(\w+)\.png”, iconurl)
+        
+        .判断开始 (data.取文本 (“//expeditions[” ＋ 到文本 (i) ＋ “].status”) ＝ “Finished”)
+            派遣_状态 ＝ “已完成”
+            派遣_人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_Side_”, “”, , , 真)
+            
+            tmp ＝ “      ” ＋ 派遣_人物 ＋ “  |  ” ＋ 派遣_状态 ＋ “  ”
+            加入成员 (str, tmp)
+            
+        .默认
+            派遣_状态 ＝ “剩余时间”
+            派遣_时间 ＝ 时间_秒到时分秒格式 (data.取整数 (“//expeditions[” ＋ 到文本 (i) ＋ “].remained_time”), “h:m:s”, 真)
+            派遣_人物 ＝ 子文本替换 (正则.取子匹配文本 (1, 1), “UI_AvatarIcon_Side_”, “”, , , 真)
+            
+            tmp ＝ “      ” ＋ 派遣_人物 ＋ “  |  ” ＋ 派遣_状态 ＋ “ : ” ＋ 派遣_时间 ＋ “  ”
+            加入成员 (str, tmp)
+            
+        .判断结束
+        
+    .计次循环尾 ()
+    
+    tmp ＝ 文本制表_表头 (取数组成员数 (str), 2, str, “ / 实时便笺 | Debug \ ”)
+    str ＝ 分割文本 (tmp, #换行符, )
+    
+    hb.创建 (1, 1, #白色, )
+    hb.字体属性 (“等距更纱黑体 SC”, 12, , , , , , , )
+    hb.置画板尺寸 (hb.取文本宽度 (str [1]), hb.取文本高度 (str [1]) × 取数组成员数 (str))
+    hb.置写出位置 (0, 0, 假)
+    hb.写出 (tmp)
+    
+    .计次循环首 (data.取数量 (“//expeditions”), i)
+        iconurl ＝ data.取文本 (“//expeditions[” ＋ 到文本 (i) ＋ “].avatar_side_icon”)
+        正则.创建 (“http.+/character_side_icon/(\w+)\.png”, iconurl)
+        iconfile ＝ 图片目录 ＋ “character_side_icon\” ＋ 正则.取子匹配文本 (1, 1) ＋ “.png”
+        
+        .如果真 (取反 (路径_是否为文件 (iconfile)))
+            c.执行下载 (iconurl, iconfile, )
+        .如果真结束
+        
+        hb.画图片 (hb.载入图片文件 (iconfile), 5, 165 ＋ i × 40, 40, 40, )
+        hb.卸载图片 ()
+        
+    .计次循环尾 ()
+    
+    img.加载数据 (hb.取图片 ())
+    写到文件 (取运行目录 () ＋ “\get_dailyNote.png”, img.取出图片数据 (0))
     hb.销毁 ()
     img.释放 ()
     
