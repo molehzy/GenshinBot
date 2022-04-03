@@ -72,6 +72,10 @@
     .局部变量 宝钱_现有, 文本型
     .局部变量 宝钱_上限, 文本型
     .局部变量 宝钱_时间, 文本型
+    .局部变量 质变仪_D, 文本型
+    .局部变量 质变仪_H, 文本型
+    .局部变量 质变仪_M, 文本型
+    .局部变量 质变仪_S, 文本型
     .局部变量 str, 文本型, , "0"
     .局部变量 tmp, 文本型
     .局部变量 hb, 内存画板
@@ -119,13 +123,33 @@
                 宝钱_时间 ＝ “--:--:--”
             .判断结束
             
+            .判断开始 (data.取逻辑值 (“//transformer.obtained”))
+                .判断开始 (data.取逻辑值 (“//transformer.recovery_time.reached”))
+                    tmp ＝ “  参量质变仪  |  已冷却  ”
+                    加入成员 (str, tmp)
+                    
+                .默认
+                    质变仪_D ＝ _文本补零 (data.取文本 (“//transformer.recovery_time.Day”))
+                    质变仪_H ＝ _文本补零 (data.取文本 (“//transformer.recovery_time.Hour”))
+                    质变仪_M ＝ _文本补零 (data.取文本 (“//transformer.recovery_time.Minute”))
+                    质变仪_S ＝ _文本补零 (data.取文本 (“//transformer.recovery_time.Second”))
+                    tmp ＝ “  参量质变仪  |  恢复时间 : ” ＋ 质变仪_D ＋ “:” ＋ 质变仪_H ＋ “:” ＋ 质变仪_M ＋ “:” ＋ 质变仪_S ＋ “  ”
+                    加入成员 (str, tmp)
+                .判断结束
+                
+            .默认
+                tmp ＝ “  参量质变仪  |  尚未获得  ”
+                加入成员 (str, tmp)
+            .判断结束
+            
+            
             tmp ＝ “  树脂 : ” ＋ 树脂_现有 ＋ “/” ＋ 树脂_上限 ＋ “  |  恢复时间 : ” ＋ 树脂_时间 ＋ “  ”
             加入成员 (str, tmp)
             tmp ＝ “  宝钱 : ” ＋ 宝钱_现有 ＋ “/” ＋ 宝钱_上限 ＋ “  |  恢复时间 : ” ＋ 宝钱_时间 ＋ “  ”
             加入成员 (str, tmp)
-            tmp ＝ “  每日 : ” ＋ 每日_完成 ＋ “/” ＋ 每日_上限 ＋ “  |  NPC奖励 : ” ＋ 每日_奖励 ＋ “  ”
+            tmp ＝ “  每日 : ” ＋ 每日_完成 ＋ “/” ＋ 每日_上限 ＋ “  |  每日NPC奖励 : ” ＋ 每日_奖励 ＋ “  ”
             加入成员 (str, tmp)
-            tmp ＝ “  派遣 : ” ＋ 派遣_现有 ＋ “/” ＋ 派遣_上限 ＋ “  |  周本半价 : ” ＋ 周本_现有 ＋ “/” ＋ 周本_上限 ＋ “  ”
+            tmp ＝ “  派遣 : ” ＋ 派遣_现有 ＋ “/” ＋ 派遣_上限 ＋ “  |  周本半价次数 : ” ＋ 周本_现有 ＋ “/” ＋ 周本_上限 ＋ “  ”
             加入成员 (str, tmp)
             
             .计次循环首 (data.取数量 (“//expeditions”), i)
@@ -1205,6 +1229,10 @@
     .局部变量 宝钱_现有, 文本型
     .局部变量 宝钱_上限, 文本型
     .局部变量 宝钱_时间, 文本型
+    .局部变量 质变仪_D, 文本型
+    .局部变量 质变仪_H, 文本型
+    .局部变量 质变仪_M, 文本型
+    .局部变量 质变仪_S, 文本型
     .局部变量 str, 文本型, , "0"
     .局部变量 tmp, 文本型
     .局部变量 hb, 内存画板
@@ -1242,13 +1270,33 @@
         宝钱_时间 ＝ “--:--:--”
     .判断结束
     
+    .判断开始 (data.取逻辑值 (“//transformer.obtained”))
+        .判断开始 (data.取逻辑值 (“//transformer.recovery_time.reached”))
+            tmp ＝ “  参量质变仪  |  已冷却  ”
+            加入成员 (str, tmp)
+            
+        .默认
+            质变仪_D ＝ _文本补零 (data.取文本 (“//transformer.recovery_time.Day”))
+            质变仪_H ＝ _文本补零 (data.取文本 (“//transformer.recovery_time.Hour”))
+            质变仪_M ＝ _文本补零 (data.取文本 (“//transformer.recovery_time.Minute”))
+            质变仪_S ＝ _文本补零 (data.取文本 (“//transformer.recovery_time.Second”))
+            tmp ＝ “  参量质变仪  |  恢复时间 : ” ＋ 质变仪_D ＋ “:” ＋ 质变仪_H ＋ “:” ＋ 质变仪_M ＋ “:” ＋ 质变仪_S ＋ “  ”
+            加入成员 (str, tmp)
+        .判断结束
+        
+    .默认
+        tmp ＝ “  参量质变仪  |  尚未获得  ”
+        加入成员 (str, tmp)
+    .判断结束
+    
+    
     tmp ＝ “  树脂 : ” ＋ 树脂_现有 ＋ “/” ＋ 树脂_上限 ＋ “  |  恢复时间 : ” ＋ 树脂_时间 ＋ “  ”
     加入成员 (str, tmp)
     tmp ＝ “  宝钱 : ” ＋ 宝钱_现有 ＋ “/” ＋ 宝钱_上限 ＋ “  |  恢复时间 : ” ＋ 宝钱_时间 ＋ “  ”
     加入成员 (str, tmp)
-    tmp ＝ “  每日 : ” ＋ 每日_完成 ＋ “/” ＋ 每日_上限 ＋ “  |  NPC奖励 : ” ＋ 每日_奖励 ＋ “  ”
+    tmp ＝ “  每日 : ” ＋ 每日_完成 ＋ “/” ＋ 每日_上限 ＋ “  |  每日NPC奖励 : ” ＋ 每日_奖励 ＋ “  ”
     加入成员 (str, tmp)
-    tmp ＝ “  派遣 : ” ＋ 派遣_现有 ＋ “/” ＋ 派遣_上限 ＋ “  |  周本半价 : ” ＋ 周本_现有 ＋ “/” ＋ 周本_上限 ＋ “  ”
+    tmp ＝ “  派遣 : ” ＋ 派遣_现有 ＋ “/” ＋ 派遣_上限 ＋ “  |  周本半价次数 : ” ＋ 周本_现有 ＋ “/” ＋ 周本_上限 ＋ “  ”
     加入成员 (str, tmp)
     
     .计次循环首 (data.取数量 (“//expeditions”), i)
@@ -1292,7 +1340,7 @@
             c.执行下载 (iconurl, iconfile, )
         .如果真结束
         
-        hb.画图片 (hb.载入图片文件 (iconfile), 5, 165 ＋ i × 40, 40, 40, )
+        hb.画图片 (hb.载入图片文件 (iconfile), 5, 205 ＋ i × 40, 40, 40, )
         hb.卸载图片 ()
         
     .计次循环尾 ()
@@ -1301,5 +1349,108 @@
     写到文件 (取运行目录 () ＋ “\get_dailyNote.png”, img.取出图片数据 (0))
     hb.销毁 ()
     img.释放 ()
+    
+
+.子程序 数据总览_Debug
+    .参数 json, 文本型
+    .局部变量 data, 存取键值表
+    .局部变量 i, 整数型
+    .局部变量 活跃天数, 文本型
+    .局部变量 成就达成数, 文本型
+    .局部变量 角色获得数, 文本型
+    .局部变量 解锁传送点, 文本型
+    .局部变量 风神瞳, 文本型
+    .局部变量 岩神瞳, 文本型
+    .局部变量 雷神瞳, 文本型
+    .局部变量 解锁秘境, 文本型
+    .局部变量 深境螺旋, 文本型
+    .局部变量 华丽宝箱, 文本型
+    .局部变量 珍贵宝箱, 文本型
+    .局部变量 精致宝箱, 文本型
+    .局部变量 普通宝箱, 文本型
+    .局部变量 奇馈宝箱, 文本型
+    .局部变量 str, 文本型, , "0"
+    .局部变量 tmp, 文本型
+    .局部变量 hb, 内存画板
+    .局部变量 img, 图片对象
+    .局部变量 世界_名称, 文本型
+    .局部变量 世界_等级, 文本型
+    .局部变量 世界_探索度, 文本型
+    .局部变量 壶_等级, 文本型
+    .局部变量 壶_仙力, 文本型
+    .局部变量 壶_获得摆设, 文本型
+    .局部变量 壶_访客, 文本型
+    .局部变量 b64, 文本型
+
+    
+    data.从JSON载入 (json, , , )
+    
+    活跃天数 ＝ data.取文本 (“//stats.active_day_number”)
+    成就达成数 ＝ data.取文本 (“//stats.achievement_number”)
+    角色获得数 ＝ data.取文本 (“//stats.avatar_number”)
+    解锁传送点 ＝ data.取文本 (“//stats.way_point_number”)
+    风神瞳 ＝ data.取文本 (“//stats.anemoculus_number”)
+    岩神瞳 ＝ data.取文本 (“//stats.geoculus_number”)
+    雷神瞳 ＝ data.取文本 (“//stats.electroculus_number”)
+    解锁秘境 ＝ data.取文本 (“//stats.domain_number”)
+    深境螺旋 ＝ data.取文本 (“//stats.spiral_abyss”)
+    华丽宝箱 ＝ data.取文本 (“//stats.luxurious_chest_number”)
+    珍贵宝箱 ＝ data.取文本 (“//stats.precious_chest_number”)
+    精致宝箱 ＝ data.取文本 (“//stats.exquisite_chest_number”)
+    普通宝箱 ＝ data.取文本 (“//stats.common_chest_number”)
+    奇馈宝箱 ＝ data.取文本 (“//stats.magic_chest_number”)
+    
+    tmp ＝ “  活跃天数 : ” ＋ 活跃天数 ＋ “  |  成就达成数 : ” ＋ 成就达成数 ＋ “  |  角色获得数 : ” ＋ 角色获得数 ＋ “  |  解锁传送点 : ” ＋ 解锁传送点 ＋ “  |  深境螺旋 : ” ＋ 深境螺旋 ＋ “  ”
+    加入成员 (str, tmp)
+    tmp ＝ “  风神瞳 : ” ＋ 风神瞳 ＋ “  |  岩神瞳 : ” ＋ 岩神瞳 ＋ “  |  雷神瞳 : ” ＋ 雷神瞳 ＋ “  |  \\\  |  解锁秘境 : ” ＋ 解锁秘境 ＋ “  ”
+    加入成员 (str, tmp)
+    tmp ＝ “  华丽宝箱 : ” ＋ 华丽宝箱 ＋ “  |  珍贵宝箱 : ” ＋ 珍贵宝箱 ＋ “  |  精致宝箱 : ” ＋ 精致宝箱 ＋ “  |  普通宝箱 : ” ＋ 普通宝箱 ＋ “  |  奇馈宝箱 : ” ＋ 奇馈宝箱 ＋ “  ”
+    加入成员 (str, tmp)
+    
+    tmp ＝ “ | | | | ”
+    加入成员 (str, tmp)
+    
+    .计次循环首 (data.取数量 (“//world_explorations”), i)
+        世界_名称 ＝ 子文本替换 (data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].name”), “·”, “-”, , , 真)
+        世界_等级 ＝ data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].level”)
+        世界_探索度 ＝ _到百分比 (data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].exploration_percentage”))
+        
+        tmp ＝ “  ” ＋ 世界_名称 ＋ “  |  城市声望 : ” ＋ 世界_等级 ＋ “  |  探索度 : ” ＋ 世界_探索度
+        .判断开始 (取反 (data.是否存在 (“//world_explorations[” ＋ 到文本 (i) ＋ “].offerings[1].name”)))
+            tmp ＝ tmp ＋ “  |  \\\  |  \\\  ”
+            
+        .默认
+            tmp ＝ tmp ＋ “  |  ” ＋ data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].offerings[1].name”) ＋ “ : ” ＋ data.取文本 (“//world_explorations[” ＋ 到文本 (i) ＋ “].offerings[1].level”) ＋ “ 级” ＋ “  |  \\\  ”
+            
+        .判断结束
+        加入成员 (str, tmp)
+        
+    .计次循环尾 ()
+    
+    .如果真 (data.是否存在 (“//homes[1].level”))
+        壶_等级 ＝ data.取文本 (“//homes[1].level”)
+        壶_仙力 ＝ data.取文本 (“//homes[1].comfort_num”)
+        壶_获得摆设 ＝ data.取文本 (“//homes[1].item_num”)
+        壶_访客 ＝ data.取文本 (“//homes[1].visit_num”)
+        tmp ＝ “  尘歌壶  |  信任等级 : ” ＋ 壶_等级 ＋ “  |  最高仙力 : ” ＋ 壶_仙力 ＋ “  |  获得摆设 : ” ＋ 壶_获得摆设 ＋ “  |  历史访客 : ” ＋ 壶_访客 ＋ “  ”
+        加入成员 (str, tmp)
+    .如果真结束
+    
+    
+    tmp ＝ 文本制表_表头 (取数组成员数 (str), 5, str, “ / 数据总览 | Debug  \ ”)
+    str ＝ 分割文本 (tmp, #换行符, )
+    
+    hb.创建 (1, 1, #白色, )
+    hb.字体属性 (“等距更纱黑体 SC”, 12, , , , , , , )
+    hb.置画板尺寸 (hb.取文本宽度 (str [1]), hb.取文本高度 (str [1]) × 取数组成员数 (str))
+    hb.置写出位置 (0, 0, 假)
+    hb.写出 (tmp)
+    
+    img.加载数据 (hb.取图片 ())
+    写到文件 (取运行目录 () ＋ “\get_user_stats.png”, img.取出图片数据 (0))
+    hb.销毁 ()
+    img.释放 ()
+    
+    
     
 
